@@ -21,7 +21,6 @@ export default function RoadmapPage() {
   const timeline = [
     {
       phase: "Phase 1: Proof of Concept & MVP",
-      time: "Q2 2026",
       status: "completed",
       items: [
         "Create responsive Web3 retro cyberpunk portal (SolRead)",
@@ -33,8 +32,7 @@ export default function RoadmapPage() {
       ],
     },
     {
-      phase: "Phase 2: Decentralized Storage & Mainnet",
-      time: "Q3 2026",
+      phase: "Phase 2: Decentralized Storage & Mainnet Launch",
       status: "in-progress",
       items: [
         "Store published articles permanently and censorship-resistant on Arweave / IPFS using Pinata or Bundlr",
@@ -45,22 +43,11 @@ export default function RoadmapPage() {
     },
     {
       phase: "Phase 3: Creator Analytics & SaaS Panel",
-      time: "Q4 2026",
       status: "planned",
       items: [
         "Develop web publisher panel to view real-time unlocking graphs, subscriber traffic, and SOL earnings",
         "Introduce smart contract subscriptions (recurring micropayments powered by Solana stream protocols)",
         "Establish an embed preview simulator allowing creators to test their widget layouts live in browser",
-      ],
-    },
-    {
-      phase: "Phase 4: Developer Ecosystem & DAO",
-      time: "2027+",
-      status: "planned",
-      items: [
-        "Release SolJeton React, Vue, and WordPress plugins for zero-code integration by non-crypto developers",
-        "Deploy a 1% network fee protocol contract feeding a developer grant treasury",
-        "Initiate a DAO governance token model giving active creators vote shares in monetization protocol parameters",
       ],
     },
   ];
@@ -138,31 +125,41 @@ export default function RoadmapPage() {
           </div>
         </div>
 
-        {/* Timeline */}
-        <div className="relative border-l border-slate-800 ml-4 md:ml-6 space-y-12">
+        {/* Timeline Path */}
+        <div className="relative pl-4 space-y-12">
+          {/* Vertical Glowing Road Path */}
+          <div className="absolute left-[20px] top-6 bottom-6 w-1 bg-gradient-to-b from-green-400 via-purple-500 to-slate-800 rounded-full shadow-[0_0_8px_rgba(168,85,247,0.2)]" />
+
           {timeline.map((phase, idx) => {
             const isCompleted = phase.status === "completed";
             const isInProgress = phase.status === "in-progress";
 
             return (
-              <div key={idx} className="relative pl-8 md:pl-10 group">
-                {/* Connector Dot */}
+              <div key={idx} className="relative pl-10 group">
+                {/* Glowing Concentric Road Node */}
                 <div
-                  className={`absolute -left-[9px] top-1.5 w-4.5 h-4.5 rounded-full border-4 transition-all duration-300 ${
+                  className={`absolute left-[6px] top-1.5 w-7 h-7 rounded-full bg-slate-950 flex items-center justify-center border-2 transition-all duration-300 z-10 ${
                     isCompleted
-                      ? "bg-green-500 border-slate-950 shadow-[0_0_10px_rgba(34,197,94,0.6)]"
+                      ? "border-green-500/60 shadow-[0_0_12px_rgba(74,222,128,0.4)]"
                       : isInProgress
-                      ? "bg-purple-600 border-slate-950 shadow-[0_0_10px_rgba(168,85,247,0.6)] animate-pulse"
-                      : "bg-slate-800 border-slate-950"
+                      ? "border-purple-500/60 shadow-[0_0_12px_rgba(168,85,247,0.4)] animate-pulse"
+                      : "border-slate-800"
                   }`}
-                />
+                >
+                  <div
+                    className={`w-3.5 h-3.5 rounded-full transition-all duration-300 ${
+                      isCompleted
+                        ? "bg-green-400 shadow-[0_0_8px_rgba(74,222,128,0.8)]"
+                        : isInProgress
+                        ? "bg-purple-500 shadow-[0_0_8px_rgba(168,85,247,0.8)]"
+                        : "bg-slate-700"
+                    }`}
+                  />
+                </div>
 
                 {/* Phase Header */}
                 <div className="flex flex-wrap items-center gap-3 mb-4">
                   <h3 className="text-base font-bold text-slate-200">{phase.phase}</h3>
-                  <span className="text-[10px] font-mono text-slate-500 bg-slate-900 border border-slate-800 rounded-full px-2.5 py-1">
-                    {phase.time}
-                  </span>
                   
                   {isCompleted ? (
                     <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-mono font-bold bg-green-950/60 border border-green-800/40 text-green-400">
@@ -180,7 +177,7 @@ export default function RoadmapPage() {
                 </div>
 
                 {/* Phase Items Card */}
-                <div className="bg-slate-900/30 border border-slate-900 hover:border-slate-800/60 transition-colors p-6 rounded-2xl">
+                <div className="bg-slate-900/30 border border-slate-900 hover:border-slate-800/60 transition-colors p-6 rounded-2xl relative overflow-hidden">
                   <ul className="space-y-3">
                     {phase.items.map((item, itemIdx) => (
                       <li key={itemIdx} className="flex items-start gap-2.5 text-xs text-slate-400 leading-relaxed">
