@@ -44,6 +44,7 @@ const WIDGET_SNIPPET = `<!-- 1. Paywall container -->
 <div
   data-soljeton-article="solana-future"
   data-soljeton-price="0.01"
+  data-soljeton-token="SOL"
   data-soljeton-recipient="YOUR_WALLET_ADDRESS"
   data-soljeton-reveal-id="premium-content"
   data-soljeton-domain="https://solread.vercel.app">
@@ -355,6 +356,10 @@ export default function Home() {
                 <span className="text-purple-300">{"data-soljeton-recipient"}</span>
                 <span className="text-slate-400">{"="}</span>
                 <span className="text-yellow-300">{'"YOUR_WALLET_ADDRESS"'}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-token"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{'"SOL"'}</span>{"\n"}
                 {"  "}
                 <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
                 <span className="text-slate-400">{"="}</span>
