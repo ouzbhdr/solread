@@ -21,8 +21,8 @@ export function Header() {
     <header className="border-b border-purple-900/40 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between flex-wrap gap-3 sm:flex-nowrap">
         <Link href="/" className="flex items-center gap-2 group shrink-0">
-          <div className="p-1.5 bg-purple-600 rounded-lg shadow-[0_0_15px_rgba(147,51,234,0.5)] group-hover:shadow-[0_0_20px_rgba(147,51,234,0.8)] transition-all duration-300">
-            <Coins className="w-4 h-4 text-white" />
+          <div className="w-7 h-7 overflow-hidden rounded-lg shadow-[0_0_10px_rgba(168,85,247,0.3)] group-hover:shadow-[0_0_15px_rgba(168,85,247,0.6)] transition-all duration-300">
+            <img src="/logo.png" alt="SolRead" className="w-full h-full object-cover" />
           </div>
           <span className="text-lg font-black tracking-widest bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-mono">
             SOLREAD

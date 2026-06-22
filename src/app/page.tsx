@@ -395,8 +395,8 @@ export default function Home() {
       <footer className="relative z-20 border-t border-slate-800/50 bg-slate-950/80 py-8">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 bg-purple-600/20 rounded-lg border border-purple-800/30">
-              <Coins className="w-4 h-4 text-purple-400" />
+            <div className="w-7 h-7 overflow-hidden rounded-lg shadow-[0_0_10px_rgba(168,85,247,0.2)]">
+              <img src="/logo.png" alt="SolRead" className="w-full h-full object-cover" />
             </div>
             <span className="text-sm font-mono font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
               SOLREAD
