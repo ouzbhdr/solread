@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SolRead & SolJeton Paywall
 
-## Getting Started
+SolRead is a Web3 publishing platform, and SolJeton is an embeddable micropayment paywall widget. Together, they enable a **pay-per-content** monetization model for digital creators on the Solana blockchain.
 
-First, run the development server:
+Instead of expensive monthly subscriptions, readers can instantly unlock premium articles by paying micro-amounts of SOL (e.g., 0.01 SOL) using browser wallets or mobile Solana Pay QR codes.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## Features 🚀
+
+- **SolJeton Paywall Widget:** An embeddable component that locks premium content.
+- **Single-Line Widget Integration:** Publishers can embed the paywall on any website (WordPress, Webflow, custom HTML) with a single `div` placeholder and a script tag.
+- **Web3 Browser Wallet Integration:** Connect Phantom, Solflare, or other wallets to approve payments with one click.
+- **Solana Pay QR Support:** Generate standard Solana Pay URLs so mobile wallet users can scan and pay instantly.
+- **Secure On-Chain Verification:** A Next.js API route fetches the transaction signature directly from the Solana Devnet RPC to verify the recipient address and transferred SOL amount before revealing content.
+- **English-first Retro Theme:** Sleek cyberpunk/CRT aesthetics for high-end visual appeal.
+
+---
+
+## Single-Line Integration Guide (For Publishers) 🔌
+
+To place a SolJeton paywall on an external blog, website, or publication, add these two snippets to the HTML:
+
+```html
+<!-- 1. The placeholder where the paywall will render. 
+     Set data-soljeton-reveal-id to the ID of the premium content div to automatically reveal it. -->
+<div data-soljeton-article="solana-future" data-soljeton-reveal-id="parent-premium-content" data-soljeton-domain="https://solread.vercel.app"></div>
+
+<!-- 2. The single-line SolJeton widget script -->
+<script src="https://solread.vercel.app/widget.js"></script>
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+*Note: Replace `https://solread.vercel.app` with your deployed domain, or use `http://localhost:3000` during local development.*
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Technical Stack 🛠️
 
-## Learn More
+- **Framework:** Next.js 16 (App Router, Turbopack)
+- **Blockchain Libraries:** `@solana/web3.js`, `@solana/wallet-adapter-react`, `@solana/pay`
+- **Styling:** CSS Variables + TailwindCSS
+- **Type Safety:** TypeScript
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Getting Started (Local Development) ⚙️
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
+Make sure you have Node.js installed.
 
-## Deploy on Vercel
+### 1. Install Dependencies
+```bash
+npm install
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 2. Run the Development Server
+```bash
+npm run dev
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open [http://localhost:3000](http://localhost:3000) to see the portal.
+Open [http://localhost:3000/demo-embed.html](http://localhost:3000/demo-embed.html) to see the external site widget demo.
+
+### 3. Build for Production
+```bash
+npm run build
+```
+
+---
+
+## License 📄
+This project is open-source and licensed under the MIT License.
