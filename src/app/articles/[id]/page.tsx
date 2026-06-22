@@ -75,31 +75,11 @@ export default function ArticlePage() {
     setLoadingArticle(false);
   }, [id]);
 
-  const { connection } = useConnection();
-  const [isSubscribing, setIsSubscribing] = useState(false);
-  const [subStatus, setSubStatus] = useState("");
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  // Check unlock status in localStorage (Payment Memory & Creator Subscription)
+  // Check unlock status in localStorage (Payment Memory)
   useEffect(() => {
     if (!id || !article) return;
     
     const walletKey = publicKey ? publicKey.toBase58() : "anonymous";
-    
-    // Check if subscribed to the author
-    const subKey = `solread_subscribed_${walletKey}_${article.author}`;
-    const subAnonKey = `solread_subscribed_anonymous_${article.author}`;
-    const isSub = localStorage.getItem(subKey) === "true" || localStorage.getItem(subAnonKey) === "true";
-    
-    if (isSub) {
-      setIsSubscribed(true);
-      setUnlockedContent(article.premiumContent);
-      return;
-    } else {
-      setIsSubscribed(false);
-    }
-
-    // Check single article unlock status
     const cachedWallet = localStorage.getItem(`solread_unlocked_${walletKey}_${id}`);
     const cachedAnon = localStorage.getItem(`solread_unlocked_anonymous_${id}`);
     const cached = cachedWallet || cachedAnon;
@@ -116,47 +96,6 @@ export default function ArticlePage() {
       setUnlockedContent(null);
     }
   }, [publicKey, id, article]);
-
-  const handleSubscribe = async () => {
-    if (!publicKey) {
-      setSubStatus("Connect your wallet first.");
-      return;
-    }
-    if (!article) return;
-    try {
-      setIsSubscribing(true);
-      setSubStatus("Preparing subscription tx...");
-      
-      const subPrice = article.priceSOL * 5; // Subscription is 5x single price
-      const transaction = new Transaction().add(
-        SystemProgram.transfer({
-          fromPubkey: publicKey,
-          toPubkey: new PublicKey(article.recipient),
-          lamports: subPrice * LAMPORTS_PER_SOL,
-        })
-      );
-      
-      setSubStatus("Waiting for wallet approval...");
-      const signature = await sendTransaction(transaction, connection);
-      
-      setSubStatus("Waiting for confirmation (3-5s)...");
-      await connection.confirmTransaction(signature, "confirmed");
-      
-      setSubStatus("Subscribed successfully!");
-      
-      const walletKey = publicKey.toBase58();
-      localStorage.setItem(`solread_subscribed_${walletKey}_${article.author}`, "true");
-      localStorage.setItem(`solread_subscribed_anonymous_${article.author}`, "true");
-      
-      setIsSubscribed(true);
-      setUnlockedContent(article.premiumContent);
-    } catch (error: any) {
-      console.error("Subscription error:", error);
-      setSubStatus(error.message || "Subscription failed.");
-    } finally {
-      setIsSubscribing(false);
-    }
-  };
 
   if (loadingArticle) {
     return (
@@ -257,60 +196,15 @@ export default function ArticlePage() {
                 </div>
               </div>
 
-              {/* Paywall Widget + Creator Pass Grid */}
-              <div className="grid md:grid-cols-5 gap-6 items-stretch w-full">
-                {/* Single Article Paywall (3/5 cols) */}
-                <div className="md:col-span-3">
-                  <SolJetonPaywall
-                    articleId={id}
-                    priceSOL={article.priceSOL}
-                    recipientAddress={article.recipient}
-                    onUnlocked={handleUnlocked}
-                    customPremiumContent={article.premiumContent}
-                  />
-                </div>
-
-                {/* Creator Pass Subscription (2/5 cols) */}
-                <div className="md:col-span-2 bg-slate-900/60 border-2 border-purple-500/30 rounded-2xl p-6 flex flex-col justify-between shadow-[0_0_20px_rgba(168,85,247,0.1)] relative">
-                  <div className="absolute inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-[size:100%_3px]" />
-                  <div className="flex flex-col gap-4">
-                    <div className="p-2 bg-purple-600/10 border border-purple-800/40 rounded-xl w-fit">
-                      <Sparkles className="w-5 h-5 text-purple-400" />
-                    </div>
-                    <h3 className="text-sm font-bold font-mono tracking-widest text-purple-300 uppercase">
-                      CREATOR PASS
-                    </h3>
-                    <p className="text-xs text-slate-400 leading-relaxed">
-                      Unlock all current and future premium articles by <span className="text-slate-200 font-semibold">{article.author}</span> permanently.
-                    </p>
-                    <div className="mt-2 px-3 py-1 bg-purple-500/10 border border-purple-800/40 rounded-full font-mono text-purple-300 font-bold text-sm w-fit">
-                      {(article.priceSOL * 5).toFixed(3)} SOL
-                    </div>
-                  </div>
-
-                  <div className="mt-6 flex flex-col gap-2">
-                    <button
-                      onClick={handleSubscribe}
-                      disabled={isSubscribing}
-                      className="w-full bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-mono font-bold py-2.5 px-4 rounded-xl text-xs transition-all shadow-[0_0_15px_rgba(147,51,234,0.3)] cursor-pointer text-center"
-                    >
-                      {isSubscribing ? (
-                        <div className="flex items-center justify-center gap-1.5">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span>SUBSCRIBING...</span>
-                        </div>
-                      ) : (
-                        `SUBSCRIBE`
-                      )}
-                    </button>
-
-                    {subStatus && (
-                      <p className="text-[10px] font-mono text-purple-400 text-center mt-1">
-                        {subStatus}
-                      </p>
-                    )}
-                  </div>
-                </div>
+              {/* Paywall Widget — in normal document flow, not absolute */}
+              <div className="w-full">
+                <SolJetonPaywall
+                  articleId={id}
+                  priceSOL={article.priceSOL}
+                  recipientAddress={article.recipient}
+                  onUnlocked={handleUnlocked}
+                  customPremiumContent={article.premiumContent}
+                />
               </div>
             </div>
           ) : (
