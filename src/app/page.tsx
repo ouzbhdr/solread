@@ -44,7 +44,7 @@ const WIDGET_SNIPPET = `<!-- 1. Paywall container -->
 <div
   data-soljeton-article="solana-future"
   data-soljeton-price="0.01"
-  data-soljeton-recipient="GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"
+  data-soljeton-recipient="YOUR_WALLET_ADDRESS"
   data-soljeton-reveal-id="premium-content"
   data-soljeton-domain="https://solread.vercel.app">
 </div>
@@ -354,7 +354,7 @@ export default function Home() {
                 {"  "}
                 <span className="text-purple-300">{"data-soljeton-recipient"}</span>
                 <span className="text-slate-400">{"="}</span>
-                <span className="text-yellow-300">{'"GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"'}</span>{"\n"}
+                <span className="text-yellow-300">{'"YOUR_WALLET_ADDRESS"'}</span>{"\n"}
                 {"  "}
                 <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
                 <span className="text-slate-400">{"="}</span>
@@ -398,7 +398,7 @@ export default function Home() {
             </span>
           </div>
           <p className="text-xs font-mono text-slate-600">
-            © 2026 SolRead & SolJeton · Powered by Solana Devnet · Open Source
+            © 2026 SolRead & SolJeton · Powered by Solana Devnet
           </p>
           <div className="flex items-center gap-1.5 text-xs font-mono text-slate-600">
             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
