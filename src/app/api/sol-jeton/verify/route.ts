@@ -47,7 +47,7 @@ The Subscription model made sense when payment infrastructure was expensive and 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { signature, articleId } = body;
+    const { signature, articleId, customPriceSOL, customPremiumContent } = body;
 
     if (!signature || !articleId) {
       return NextResponse.json(
@@ -56,7 +56,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const article = ARTICLES[articleId];
+    let article = ARTICLES[articleId];
+    if (!article && customPriceSOL !== undefined && customPremiumContent !== undefined) {
+      article = {
+        title: "Custom Article",
+        priceSOL: Number(customPriceSOL),
+        premiumContent: String(customPremiumContent),
+      };
+    }
+
     if (!article) {
       return NextResponse.json(
         { error: "Article not found." },

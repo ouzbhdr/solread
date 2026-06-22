@@ -17,6 +17,7 @@ interface SolJetonPaywallProps {
   priceSOL: number;
   recipientAddress: string;
   onUnlocked: (premiumContent: string) => void;
+  customPremiumContent?: string;
 }
 
 export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
@@ -24,6 +25,7 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
   priceSOL,
   recipientAddress,
   onUnlocked,
+  customPremiumContent,
 }) => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
@@ -73,6 +75,8 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
           signature,
           articleId,
           recipientAddress,
+          customPriceSOL: priceSOL,
+          customPremiumContent: customPremiumContent,
         }),
       });
 
@@ -83,6 +87,18 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
       }
 
       setStatusMessage("Payment verified successfully!");
+      
+      // Save unlock state to localStorage for persistence
+      const walletKey = publicKey ? publicKey.toBase58() : "anonymous";
+      localStorage.setItem(
+        `solread_unlocked_${walletKey}_${articleId}`,
+        JSON.stringify({ premiumContent: data.premiumContent })
+      );
+      localStorage.setItem(
+        `solread_unlocked_anonymous_${articleId}`,
+        JSON.stringify({ premiumContent: data.premiumContent })
+      );
+
       onUnlocked(data.premiumContent);
     } catch (error: any) {
       console.error("Payment error:", error);
@@ -114,6 +130,8 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
           signature: manualSignature.trim(),
           articleId,
           recipientAddress,
+          customPriceSOL: priceSOL,
+          customPremiumContent: customPremiumContent,
         }),
       });
 
@@ -124,6 +142,18 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
       }
 
       setStatusMessage("Payment verified successfully!");
+
+      // Save unlock state to localStorage for persistence
+      const walletKey = publicKey ? publicKey.toBase58() : "anonymous";
+      localStorage.setItem(
+        `solread_unlocked_${walletKey}_${articleId}`,
+        JSON.stringify({ premiumContent: data.premiumContent })
+      );
+      localStorage.setItem(
+        `solread_unlocked_anonymous_${articleId}`,
+        JSON.stringify({ premiumContent: data.premiumContent })
+      );
+
       onUnlocked(data.premiumContent);
     } catch (error: any) {
       console.error("Verification error:", error);

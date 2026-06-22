@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { SolJetonPaywall } from "@/components/sol-jeton/paywall";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { Coins, ChevronLeft, Calendar, User, CheckCircle2, ArrowLeft, Lock } from "lucide-react";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { Header } from "@/components/header";
+import { Coins, ChevronLeft, Calendar, User, CheckCircle2, ArrowLeft, Lock, Loader2 } from "lucide-react";
 
 const ARTICLES_METADATA: Record<
   string,
@@ -45,9 +46,64 @@ const ARTICLES_METADATA: Record<
 export default function ArticlePage() {
   const params = useParams();
   const id = params.id as string;
+  const { publicKey } = useWallet();
 
-  const article = ARTICLES_METADATA[id];
+  const [article, setArticle] = useState<any>(null);
   const [unlockedContent, setUnlockedContent] = useState<string | null>(null);
+  const [loadingArticle, setLoadingArticle] = useState(true);
+
+  // Load article metadata
+  useEffect(() => {
+    setLoadingArticle(true);
+    if (ARTICLES_METADATA[id]) {
+      setArticle(ARTICLES_METADATA[id]);
+    } else {
+      const localArticles = localStorage.getItem("solread_custom_articles");
+      if (localArticles) {
+        try {
+          const parsed = JSON.parse(localArticles);
+          const found = parsed.find((a: any) => a.id === id);
+          if (found) {
+            setArticle(found);
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    }
+    setLoadingArticle(false);
+  }, [id]);
+
+  // Check unlock status in localStorage (Payment Memory)
+  useEffect(() => {
+    if (!id) return;
+    
+    const walletKey = publicKey ? publicKey.toBase58() : "anonymous";
+    const cachedWallet = localStorage.getItem(`solread_unlocked_${walletKey}_${id}`);
+    const cachedAnon = localStorage.getItem(`solread_unlocked_anonymous_${id}`);
+    const cached = cachedWallet || cachedAnon;
+
+    if (cached) {
+      try {
+        const parsed = JSON.parse(cached);
+        setUnlockedContent(parsed.premiumContent);
+      } catch (e) {
+        console.error(e);
+        setUnlockedContent(null);
+      }
+    } else {
+      setUnlockedContent(null);
+    }
+  }, [publicKey, id]);
+
+  if (loadingArticle) {
+    return (
+      <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col items-center justify-center p-4">
+        <Loader2 className="w-8 h-8 text-purple-500 animate-spin" />
+        <span className="text-sm font-mono text-slate-500 mt-2">Loading article...</span>
+      </div>
+    );
+  }
 
   if (!article) {
     return (
@@ -79,20 +135,7 @@ export default function ArticlePage() {
       <div className="fixed inset-0 pointer-events-none opacity-[0.02] bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.3)_50%)] bg-[size:100%_3px]" />
 
       {/* Header */}
-      <header className="border-b border-purple-900/40 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-4xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <ChevronLeft className="w-4 h-4 text-slate-500 group-hover:text-purple-400 transition-colors" />
-            <div className="p-1.5 bg-purple-600/20 rounded-lg border border-purple-800/30">
-              <Coins className="w-4 h-4 text-purple-400" />
-            </div>
-            <span className="text-base font-black tracking-widest bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-mono">
-              SOLREAD
-            </span>
-          </Link>
-          <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-500 !rounded-xl !py-2 !px-4 !font-mono !font-bold !text-sm !transition-all !shadow-[0_0_15px_rgba(147,51,234,0.3)]" />
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="relative z-10 max-w-3xl mx-auto px-4 py-10 flex-1 w-full">
@@ -159,6 +202,7 @@ export default function ArticlePage() {
                   priceSOL={article.priceSOL}
                   recipientAddress={article.recipient}
                   onUnlocked={handleUnlocked}
+                  customPremiumContent={article.premiumContent}
                 />
               </div>
             </div>

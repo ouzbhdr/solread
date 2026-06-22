@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { Header } from "@/components/header";
 import {
   Coins,
   BookOpen,
@@ -15,6 +15,8 @@ import {
   Globe,
   Lock,
   Unlock,
+  User,
+  Calendar,
 } from "lucide-react";
 
 const ARTICLES = [
@@ -95,6 +97,7 @@ function CopyButton({ text }: { text: string }) {
 
 export default function Home() {
   const [floatingY, setFloatingY] = useState(0);
+  const [articlesList, setArticlesList] = useState<any[]>(ARTICLES);
 
   useEffect(() => {
     let frame: number;
@@ -107,6 +110,22 @@ export default function Home() {
     };
     frame = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frame);
+  }, []);
+
+  // Merge built-in articles with custom user articles from localStorage
+  useEffect(() => {
+    const localArticles = localStorage.getItem("solread_custom_articles");
+    if (localArticles) {
+      try {
+        const parsed = JSON.parse(localArticles);
+        if (Array.isArray(parsed)) {
+          // Prepend custom articles so they appear first
+          setArticlesList([...parsed, ...ARTICLES]);
+        }
+      } catch (e) {
+        console.error("Failed to parse custom articles", e);
+      }
+    }
   }, []);
 
   return (
@@ -126,29 +145,7 @@ export default function Home() {
       <div className="fixed inset-0 pointer-events-none bg-[linear-gradient(to_right,#0f172a_1px,transparent_1px),linear-gradient(to_bottom,#0f172a_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_80%_80%_at_50%_0%,#000_40%,transparent_100%)] opacity-60" />
 
       {/* ── HEADER ── */}
-      <header className="border-b border-purple-900/40 bg-slate-950/70 backdrop-blur-xl sticky top-0 z-40">
-        <div className="max-w-6xl mx-auto px-4 py-3.5 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5 group">
-            <div
-              className="p-2 bg-purple-600 rounded-xl shadow-[0_0_20px_rgba(147,51,234,0.6)] group-hover:shadow-[0_0_30px_rgba(147,51,234,0.9)] transition-all duration-300"
-              style={{ transform: `translateY(${floatingY * 0.3}px)` }}
-            >
-              <Coins className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-black tracking-widest bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent font-mono">
-              SOLREAD
-            </span>
-          </Link>
-
-          <div className="flex items-center gap-3">
-            <span className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-slate-500 bg-slate-900 border border-slate-800 rounded-full px-3 py-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-              Solana Devnet
-            </span>
-            <WalletMultiButton className="!bg-purple-600 hover:!bg-purple-500 !rounded-xl !py-2 !px-4 !font-mono !font-bold !text-sm !transition-all !shadow-[0_0_15px_rgba(147,51,234,0.3)] hover:!shadow-[0_0_25px_rgba(147,51,234,0.5)]" />
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* ── HERO ── */}
       <section className="relative z-20 max-w-5xl mx-auto px-4 pt-20 pb-16 text-center flex flex-col items-center gap-6">
@@ -221,7 +218,7 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-2 gap-5">
-          {ARTICLES.map((article) => (
+          {articlesList.map((article) => (
             <Link
               key={article.id}
               href={`/articles/${article.id}`}
@@ -249,9 +246,24 @@ export default function Home() {
                 <h3 className="text-base font-bold tracking-tight text-slate-100 mb-3 leading-snug group-hover:text-white transition-colors">
                   {article.title}
                 </h3>
-                <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed group-hover:text-slate-400 transition-colors">
+                <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed group-hover:text-slate-400 transition-colors mb-4">
                   {article.teaser}
                 </p>
+
+                {article.author && (
+                  <div className="flex items-center gap-3 text-[10px] font-mono text-slate-500 mt-2">
+                    <span className="flex items-center gap-1">
+                      <User className="w-3 h-3" />
+                      {article.author}
+                    </span>
+                    {article.date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {article.date}
+                      </span>
+                    )}
+                  </div>
+                )}
               </div>
 
               <div className="relative mt-5 flex items-center justify-between">
