@@ -19,7 +19,7 @@ import {
 export default function SolJetonShowcase() {
   const [articleId, setArticleId] = useState("my-first-article");
   const [priceSOL, setPriceSOL] = useState("0.005");
-  const [recipient, setRecipient] = useState("GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR");
+  const [recipient, setRecipient] = useState("YOUR_WALLET_ADDRESS");
   const [token, setToken] = useState("SOL");
   const [copied, setCopied] = useState(false);
 
@@ -110,7 +110,7 @@ export default function SolJetonShowcase() {
           <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
             <h2 className="text-lg font-bold font-mono tracking-wider text-purple-300 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-400" />
-              CONFIG WIDGET
+              CONFIGURE WIDGET
             </h2>
             <hr className="border-slate-800" />
 
