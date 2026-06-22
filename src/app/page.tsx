@@ -42,7 +42,9 @@ const ARTICLES = [
 
 const WIDGET_SNIPPET = `<!-- 1. Paywall container -->
 <div
-  data-soljeton-article="your-article-id"
+  data-soljeton-article="solana-future"
+  data-soljeton-price="0.01"
+  data-soljeton-recipient="GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"
   data-soljeton-reveal-id="premium-content"
   data-soljeton-domain="https://solread.vercel.app">
 </div>
@@ -344,7 +346,15 @@ export default function Home() {
                 {"  "}
                 <span className="text-purple-300">{"data-soljeton-article"}</span>
                 <span className="text-slate-400">{"="}</span>
-                <span className="text-yellow-300">{'"your-article-id"'}</span>{"\n"}
+                <span className="text-yellow-300">{'"solana-future"'}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-price"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{'"0.01"'}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-recipient"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{'"GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR"'}</span>{"\n"}
                 {"  "}
                 <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
                 <span className="text-slate-400">{"="}</span>
