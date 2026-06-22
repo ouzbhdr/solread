@@ -20,6 +20,7 @@ export default function SolJetonShowcase() {
   const [articleId, setArticleId] = useState("my-first-article");
   const [priceSOL, setPriceSOL] = useState("0.005");
   const [recipient, setRecipient] = useState("GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR");
+  const [token, setToken] = useState("SOL");
   const [copied, setCopied] = useState(false);
 
   const currentDomain = typeof window !== "undefined" ? window.location.origin : "https://solread.vercel.app";
@@ -29,6 +30,7 @@ export default function SolJetonShowcase() {
   data-soljeton-article="${articleId}"
   data-soljeton-price="${priceSOL}"
   data-soljeton-recipient="${recipient}"
+  data-soljeton-token="${token}"
   data-soljeton-reveal-id="premium-locked-content"
   data-soljeton-domain="${currentDomain}"
 ></div>
@@ -129,7 +131,7 @@ export default function SolJetonShowcase() {
             {/* Input 2: Price in SOL */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
-                Article Price (SOL)
+                Article Price
               </label>
               <input
                 type="number"
@@ -139,6 +141,22 @@ export default function SolJetonShowcase() {
                 className="bg-slate-950 border border-slate-800 focus:border-purple-600 focus:outline-none rounded-lg px-3 py-2 text-xs font-mono text-slate-300 transition-colors"
                 placeholder="e.g. 0.005"
               />
+            </div>
+
+            {/* Input: Payment Token */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+                Payment Token / Coin
+              </label>
+              <select
+                value={token}
+                onChange={(e) => setToken(e.target.value)}
+                className="bg-slate-950 border border-slate-800 focus:border-purple-600 focus:outline-none rounded-lg px-3 py-2 text-xs font-mono text-slate-300 cursor-pointer"
+              >
+                <option value="SOL">SOL (Solana)</option>
+                <option value="USDC">USDC (USD Coin)</option>
+                <option value="USDG">USDG (USD Gate stablecoin)</option>
+              </select>
             </div>
 
             {/* Input 3: Recipient Wallet Address */}
@@ -199,6 +217,10 @@ export default function SolJetonShowcase() {
                   <span className="text-purple-300">{"data-soljeton-recipient"}</span>
                   <span className="text-slate-400">{"="}</span>
                   <span className="text-yellow-300">{`"${recipient}"`}</span>{"\n"}
+                  {"  "}
+                  <span className="text-purple-300">{"data-soljeton-token"}</span>
+                  <span className="text-slate-400">{"="}</span>
+                  <span className="text-yellow-300">{`"${token}"`}</span>{"\n"}
                   {"  "}
                   <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
                   <span className="text-slate-400">{"="}</span>

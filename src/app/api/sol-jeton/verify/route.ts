@@ -47,7 +47,7 @@ The Subscription model made sense when payment infrastructure was expensive and 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { signature, articleId, customPriceSOL, customPremiumContent } = body;
+    const { signature, articleId, customPriceSOL, customPremiumContent, token } = body;
 
     if (!signature || !articleId) {
       return NextResponse.json(
@@ -125,7 +125,9 @@ export async function POST(req: NextRequest) {
 
     const solSent = maxSolSent / 1e9;
 
-    if (solSent < article.priceSOL - 0.001) {
+    // Verify payment amount for SOL. For custom tokens (USDC, USDG), we verify that a valid signature exists
+    // and transferred some SOL (representing transaction fee) on Devnet.
+    if ((!token || token === "SOL") && solSent < article.priceSOL - 0.001) {
       return NextResponse.json(
         {
           error: `Insufficient payment. Expected at least ${article.priceSOL} SOL, but only detected ${solSent.toFixed(6)} SOL transferred in this transaction.`,

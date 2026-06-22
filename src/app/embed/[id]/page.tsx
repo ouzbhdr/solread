@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useParams } from "next/navigation";
+import React, { useState, Suspense } from "react";
+import { useParams, useSearchParams } from "next/navigation";
 import { SolJetonPaywall } from "@/components/sol-jeton/paywall";
 
 // Mock metadata (must match other parts)
@@ -14,24 +14,42 @@ const ARTICLES_METADATA: Record<
 > = {
   "solana-future": {
     priceSOL: 0.01,
-    recipient: "7tD8Bq5Qc17pD58aQJtGg4gCdtjQzPZtK7N2c7K1N2c7",
+    recipient: "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
   },
   "web3-monetization": {
     priceSOL: 0.005,
-    recipient: "7tD8Bq5Qc17pD58aQJtGg4gCdtjQzPZtK7N2c7K1N2c7",
+    recipient: "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR",
   },
 };
 
-export default function EmbedPage() {
+function EmbedContent() {
   const params = useParams();
   const id = params.id as string;
-  const article = ARTICLES_METADATA[id];
+  const searchParams = useSearchParams();
+
+  const queryPrice = searchParams.get("price");
+  const queryRecipient = searchParams.get("recipient");
+  const queryToken = searchParams.get("token") || "SOL";
+
   const [unlockedContent, setUnlockedContent] = useState<string | null>(null);
 
-  if (!article) {
+  // Determine metadata (Query parameters take precedence for ultimate flexibility)
+  let price = queryPrice ? parseFloat(queryPrice) : null;
+  let recipient = queryRecipient || null;
+  let token = queryToken;
+
+  if (!price || !recipient) {
+    const article = ARTICLES_METADATA[id];
+    if (article) {
+      price = article.priceSOL;
+      recipient = article.recipient;
+    }
+  }
+
+  if (!price || !recipient) {
     return (
       <div className="bg-slate-950 text-slate-400 font-mono text-xs p-4 border border-red-500 rounded-lg flex items-center justify-center h-screen">
-        HATA: GEÇERSİZ İÇERİK ID
+        ERROR: INVALID EMBED CONFIGURATION (Missing price or recipient)
       </div>
     );
   }
@@ -53,13 +71,14 @@ export default function EmbedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-2">
+    <div className="min-h-screen bg-slate-950 flex items-center justify-center p-2 w-full">
       {!unlockedContent ? (
         <SolJetonPaywall
           articleId={id}
-          priceSOL={article.priceSOL}
-          recipientAddress={article.recipient}
+          priceSOL={price}
+          recipientAddress={recipient}
           onUnlocked={handleUnlocked}
+          token={token}
         />
       ) : (
         <div className="w-full max-w-lg bg-slate-900 border-2 border-green-500 rounded-2xl p-6 shadow-[0_0_20px_rgba(34,197,94,0.2)] animate-fade-in text-slate-100 relative">
@@ -73,11 +92,23 @@ export default function EmbedPage() {
             </span>
           </div>
           
-          <p className="text-sm leading-relaxed whitespace-pre-line text-slate-200">
+          <p className="text-sm leading-relaxed whitespace-pre-line text-slate-200 font-sans">
             {unlockedContent}
           </p>
         </div>
       )}
     </div>
+  );
+}
+
+export default function EmbedPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-slate-950 text-slate-500 font-mono text-xs flex items-center justify-center h-screen">
+        Loading Paywall...
+      </div>
+    }>
+      <EmbedContent />
+    </Suspense>
   );
 }

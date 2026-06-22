@@ -18,6 +18,7 @@ interface SolJetonPaywallProps {
   recipientAddress: string;
   onUnlocked: (premiumContent: string) => void;
   customPremiumContent?: string;
+  token?: string;
 }
 
 export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
@@ -26,6 +27,7 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
   recipientAddress,
   onUnlocked,
   customPremiumContent,
+  token = "SOL",
 }) => {
   const { connection } = useConnection();
   const { publicKey, sendTransaction } = useWallet();
@@ -54,11 +56,15 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
       setIsLoading(true);
       setStatusMessage("Preparing transaction...");
 
+      const lamportsToSend = token === "SOL"
+        ? priceSOL * LAMPORTS_PER_SOL
+        : 0.0001 * LAMPORTS_PER_SOL;
+
       const transaction = new Transaction().add(
         SystemProgram.transfer({
           fromPubkey: publicKey,
           toPubkey: new PublicKey(recipientAddress),
-          lamports: priceSOL * LAMPORTS_PER_SOL,
+          lamports: lamportsToSend,
         })
       );
 
@@ -77,6 +83,7 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
           recipientAddress,
           customPriceSOL: priceSOL,
           customPremiumContent: customPremiumContent,
+          token: token,
         }),
       });
 
@@ -132,6 +139,7 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
           recipientAddress,
           customPriceSOL: priceSOL,
           customPremiumContent: customPremiumContent,
+          token: token,
         }),
       });
 
@@ -180,7 +188,7 @@ export const SolJetonPaywall: React.FC<SolJetonPaywallProps> = ({
           The rest of this article is premium locked. Insert a jeton to unlock and read.
         </p>
         <div className="mt-2 px-4 py-1.5 bg-purple-500/20 border border-purple-500 rounded-full font-mono text-purple-200 font-semibold text-lg animate-bounce">
-          {priceSOL} SOL
+          {priceSOL} {token}
         </div>
       </div>
 

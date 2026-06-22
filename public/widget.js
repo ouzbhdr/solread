@@ -8,6 +8,10 @@
       if (el.getAttribute('data-soljeton-initialized') === 'true') return;
       
       const articleId = el.getAttribute('data-soljeton-article');
+      const price = el.getAttribute('data-soljeton-price') || '0.01';
+      const recipient = el.getAttribute('data-soljeton-recipient') || '';
+      const token = el.getAttribute('data-soljeton-token') || 'SOL';
+      
       // If we are in local development or custom domain
       let domain = el.getAttribute('data-soljeton-domain');
       if (!domain) {
@@ -19,7 +23,7 @@
       
       // Create iframe
       const iframe = document.createElement('iframe');
-      iframe.src = `${domain}/embed/${articleId}`;
+      iframe.src = `${domain}/embed/${articleId}?price=${price}&recipient=${recipient}&token=${token}`;
       iframe.style.width = '100%';
       iframe.style.height = height;
       iframe.style.border = 'none';
