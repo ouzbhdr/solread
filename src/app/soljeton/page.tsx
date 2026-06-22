@@ -111,10 +111,15 @@ export default function SolJetonShowcase() {
         <div className="grid md:grid-cols-2 gap-8 items-start mb-12">
           {/* Inputs Panel */}
           <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
-            <h2 className="text-lg font-bold font-mono tracking-wider text-purple-300 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-purple-400" />
-              CONFIGURE WIDGET
-            </h2>
+            <div>
+              <h2 className="text-lg font-bold font-mono tracking-wider text-purple-300 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                WIDGET BUILDER
+              </h2>
+              <p className="text-slate-500 text-xs mt-1">
+                Set your price, recipient wallet, and currency settings below.
+              </p>
+            </div>
             <hr className="border-slate-800" />
 
             {/* Input 1: Article ID */}
