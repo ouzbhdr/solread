@@ -221,7 +221,10 @@ export default function ArticlePage() {
                 <p className="border-l-4 border-green-500 pl-4 italic text-slate-400 text-sm font-mono mb-6">
                   This section was decrypted and delivered after your payment was verified on the Solana blockchain.
                 </p>
-                <p className="whitespace-pre-line">{unlockedContent}</p>
+                <div 
+                  className="prose-content whitespace-pre-line" 
+                  dangerouslySetInnerHTML={{ __html: unlockedContent || "" }} 
+                />
               </div>
             </div>
           )}

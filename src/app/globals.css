@@ -18,3 +18,66 @@ body {
   font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Custom Rich Text Prose & Editor Styles */
+.prose-content h1, .prose-preview h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #c084fc; /* purple-400 */
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-family: var(--font-geist-mono), monospace;
+}
+.prose-content h2, .prose-preview h2 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #f472b6; /* pink-400 */
+  margin-top: 1rem;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-geist-mono), monospace;
+}
+.prose-content p, .prose-preview p {
+  margin-bottom: 0.75rem;
+  line-height: 1.6;
+}
+.prose-content table, .prose-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 0.75rem;
+  background-color: rgba(15, 23, 42, 0.4);
+}
+.prose-content th, .prose-preview th {
+  background-color: rgba(15, 23, 42, 0.8);
+  border: 1px solid #334155;
+  padding: 0.6rem;
+  font-weight: bold;
+  color: #f8fafc;
+}
+.prose-content td, .prose-preview td {
+  border: 1px solid #334155;
+  padding: 0.6rem;
+  color: #cbd5e1;
+}
+.prose-content img, .prose-preview img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.75rem;
+  border: 1px solid #334155;
+  margin: 1.25rem 0;
+}
+.prose-content u, .prose-preview u {
+  text-decoration: underline;
+}
+.prose-content b, .prose-content strong, .prose-preview b, .prose-preview strong {
+  font-weight: bold;
+  color: #f8fafc;
+}
+
+[contenteditable]:empty:before {
+  content: attr(data-placeholder);
+  color: #64748b; /* slate-500 */
+  cursor: text;
+}
+
+

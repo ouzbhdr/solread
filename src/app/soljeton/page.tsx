@@ -232,9 +232,10 @@ export default function SolJetonShowcase() {
               <div className="bg-green-950/20 border border-green-800/40 rounded-xl p-6 text-center flex flex-col gap-3 items-center">
                 <Unlock className="w-8 h-8 text-green-400 animate-bounce" />
                 <h4 className="font-bold text-green-400 font-mono text-sm">CONTENT UNLOCKED!</h4>
-                <p className="text-xs text-slate-300 leading-relaxed font-mono">
-                  {unlockedContent || "🎉 Success! This is your premium locked content revealed automatically."}
-                </p>
+                <div 
+                  className="prose-preview text-xs text-slate-300 leading-relaxed font-mono"
+                  dangerouslySetInnerHTML={{ __html: unlockedContent || "🎉 Success! This is your premium locked content revealed automatically." }}
+                />
                 <button 
                   onClick={() => {
                     setPreviewUnlocked(false);

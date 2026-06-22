@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/header";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -14,6 +14,14 @@ import {
   Info,
   CheckCircle2,
   Lock,
+  Bold,
+  Italic,
+  Underline,
+  Heading1,
+  Heading2,
+  Image,
+  Table,
+  Type,
 } from "lucide-react";
 
 export default function WriteArticle() {
@@ -32,6 +40,37 @@ export default function WriteArticle() {
   const [status, setStatus] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
 
+  const editorRef = useRef<HTMLDivElement>(null);
+
+  const updateContent = () => {
+    if (editorRef.current) {
+      setPremiumContent(editorRef.current.innerHTML);
+    }
+  };
+
+  const insertHTMLAtCursor = (html: string) => {
+    if (editorRef.current) {
+      editorRef.current.focus();
+    }
+    
+    const sel = window.getSelection();
+    if (sel && sel.getRangeAt && sel.rangeCount) {
+      const range = sel.getRangeAt(0);
+      range.deleteContents();
+      const el = document.createElement("div");
+      el.innerHTML = html;
+      const frag = document.createDocumentFragment();
+      let node;
+      while ((node = el.firstChild)) {
+        frag.appendChild(node);
+      }
+      range.insertNode(frag);
+      range.collapse(false);
+    } else if (editorRef.current) {
+      editorRef.current.innerHTML += html;
+    }
+  };
+
   // Auto-fill wallet address on connection
   useEffect(() => {
     if (publicKey) {
@@ -42,7 +81,12 @@ export default function WriteArticle() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!title || !teaser || !premiumContent || !priceSOL || !tag || !author || !recipient) {
+    const isContentEmpty = (html: string) => {
+      const text = html.replace(/<[^>]*>/g, "").replace(/&nbsp;/g, "").trim();
+      return text === "";
+    };
+
+    if (!title || !teaser || isContentEmpty(premiumContent) || !priceSOL || !tag || !author || !recipient) {
       setStatus("Please fill in all required fields.");
       return;
     }
@@ -187,14 +231,117 @@ export default function WriteArticle() {
                   <Lock className="w-2.5 h-2.5" /> Locked by Paywall
                 </span>
               </div>
-              <textarea
-                value={premiumContent}
-                onChange={(e) => setPremiumContent(e.target.value)}
-                rows={10}
-                placeholder="Write your premium, locked content here. This section is only visible after the Solana Pay transaction is confirmed..."
-                className="bg-slate-950/80 border border-slate-800 focus:border-purple-600 focus:outline-none rounded-xl px-4 py-3 text-xs font-mono text-slate-300 transition-colors resize-none leading-relaxed"
-                required
-              />
+              
+              <div className="flex flex-col border border-slate-800 rounded-xl overflow-hidden focus-within:border-purple-600">
+                {/* Formatting Toolbar */}
+                <div className="flex flex-wrap items-center gap-1.5 p-2 bg-slate-950 border-b border-slate-800">
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("bold", false)}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Bold"
+                  >
+                    <Bold className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("italic", false)}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Italic"
+                  >
+                    <Italic className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("underline", false)}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Underline"
+                  >
+                    <Underline className="w-3.5 h-3.5" />
+                  </button>
+                  
+                  <span className="w-[1px] h-4 bg-slate-800 mx-1" />
+
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("formatBlock", false, "H1")}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Heading 1"
+                  >
+                    <Heading1 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("formatBlock", false, "H2")}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Heading 2"
+                  >
+                    <Heading2 className="w-3.5 h-3.5" />
+                  </button>
+
+                  <span className="w-[1px] h-4 bg-slate-800 mx-1" />
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const url = prompt("Enter image URL:");
+                      if (url) {
+                        insertHTMLAtCursor(`<img src="${url}" alt="Image" class="max-w-full h-auto rounded-xl my-3 border border-slate-800" />`);
+                        updateContent();
+                      }
+                    }}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Insert Image"
+                  >
+                    <Image className="w-3.5 h-3.5" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const tableHTML = `<table class="w-full border-collapse border border-slate-800 my-4 text-xs bg-slate-900/40">
+  <thead>
+    <tr class="bg-slate-900">
+      <th class="border border-slate-800 p-2 font-mono text-slate-200">Header 1</th>
+      <th class="border border-slate-800 p-2 font-mono text-slate-200">Header 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="border border-slate-800 p-2 font-mono text-slate-300">Cell 1</td>
+      <td class="border border-slate-800 p-2 font-mono text-slate-300">Cell 2</td>
+    </tr>
+  </tbody>
+</table>`;
+                      insertHTMLAtCursor(tableHTML);
+                      updateContent();
+                    }}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Insert Table"
+                  >
+                    <Table className="w-3.5 h-3.5" />
+                  </button>
+
+                  <span className="w-[1px] h-4 bg-slate-800 mx-1" />
+
+                  <button
+                    type="button"
+                    onClick={() => document.execCommand("formatBlock", false, "P")}
+                    className="p-1.5 hover:bg-purple-600/20 text-slate-400 hover:text-purple-300 rounded transition-colors cursor-pointer"
+                    title="Paragraph Text"
+                  >
+                    <Type className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div
+                  ref={editorRef}
+                  contentEditable
+                  onInput={updateContent}
+                  data-placeholder="Write your premium, locked content here. You can insert tables, images, headings and format text..."
+                  className="min-h-[280px] max-h-[500px] bg-slate-950/80 focus:outline-none px-4 py-3 text-xs font-mono text-slate-300 overflow-y-auto leading-relaxed prose-preview"
+                />
+              </div>
             </div>
           </div>
 
