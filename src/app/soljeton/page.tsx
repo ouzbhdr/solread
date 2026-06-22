@@ -15,6 +15,7 @@ import {
   Layers,
   Sparkles,
 } from "lucide-react";
+import { SolJetonPaywall } from "@/components/sol-jeton/paywall";
 
 export default function SolJetonShowcase() {
   const [articleId, setArticleId] = useState("my-first-article");
@@ -22,6 +23,8 @@ export default function SolJetonShowcase() {
   const [recipient, setRecipient] = useState("YOUR_WALLET_ADDRESS");
   const [token, setToken] = useState("SOL");
   const [copied, setCopied] = useState(false);
+  const [previewUnlocked, setPreviewUnlocked] = useState(false);
+  const [unlockedContent, setUnlockedContent] = useState("");
 
   const currentDomain = typeof window !== "undefined" ? window.location.origin : "https://solread.vercel.app";
 
@@ -243,6 +246,48 @@ export default function SolJetonShowcase() {
               </pre>
             </div>
             
+            {/* Live Preview Section */}
+            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col gap-4">
+              <h3 className="text-sm font-bold font-mono tracking-wider text-purple-300 uppercase flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                Live Preview (How it looks on your site)
+              </h3>
+              <hr className="border-slate-800" />
+              
+              {previewUnlocked ? (
+                <div className="bg-green-950/20 border border-green-800/40 rounded-xl p-6 text-center flex flex-col gap-3 items-center">
+                  <Unlock className="w-8 h-8 text-green-400" />
+                  <h4 className="font-bold text-green-400 font-mono">CONTENT UNLOCKED!</h4>
+                  <p className="text-xs text-slate-300 leading-relaxed font-mono">
+                    {unlockedContent || "🎉 Success! This is your premium locked content revealed automatically."}
+                  </p>
+                  <button 
+                    onClick={() => {
+                      setPreviewUnlocked(false);
+                      setUnlockedContent("");
+                    }}
+                    className="mt-2 text-xs font-mono text-purple-400 hover:text-purple-300 underline cursor-pointer"
+                  >
+                    Reset Lock Demo
+                  </button>
+                </div>
+              ) : (
+                <div className="w-full flex justify-center">
+                  <SolJetonPaywall
+                    articleId={articleId}
+                    priceSOL={parseFloat(priceSOL) || 0.005}
+                    recipientAddress={recipient === "YOUR_WALLET_ADDRESS" || !recipient.trim() ? "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR" : recipient}
+                    token={token}
+                    onUnlocked={(content) => {
+                      setPreviewUnlocked(true);
+                      setUnlockedContent(content);
+                    }}
+                    customPremiumContent="🎉 Success! This is your premium locked content revealed automatically."
+                  />
+                </div>
+              )}
+            </div>
+
             <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5">
               <h4 className="font-mono font-bold text-xs text-slate-300 mb-2 uppercase tracking-wide">
                 How Integration Works
