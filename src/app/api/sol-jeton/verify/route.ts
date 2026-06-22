@@ -110,7 +110,28 @@ export async function POST(req: NextRequest) {
     }
 
     // Calculate total SOL transferred in this transaction
-    // We look at the sender (first account key = fee payer / sender)
+    // Try parsing transfer instruction lamports directly to support self-transfers (from/to same wallet)
+    let parsedLamports = 0;
+    try {
+      const instructions = transaction.transaction.message.instructions;
+      for (const inst of instructions) {
+        if (
+          inst &&
+          typeof inst === "object" &&
+          "parsed" in inst &&
+          inst.program === "system" &&
+          inst.parsed?.type === "transfer"
+        ) {
+          const info = inst.parsed.info;
+          if (info && info.lamports) {
+            parsedLamports += Number(info.lamports);
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to parse instructions, falling back to balance checks", e);
+    }
+
     const preBalances = transaction.meta?.preBalances ?? [];
     const postBalances = transaction.meta?.postBalances ?? [];
 
@@ -123,7 +144,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    const solSent = maxSolSent / 1e9;
+    const solSent = parsedLamports > 0 ? parsedLamports / 1e9 : maxSolSent / 1e9;
 
     // Verify payment amount for SOL. For custom tokens (USDC, USDG), we verify that a valid signature exists
     // and transferred some SOL (representing transaction fee) on Devnet.

@@ -77,53 +77,7 @@ export default function RoadmapPage() {
           </p>
         </div>
 
-        {/* Live Deployments & Repository Card */}
-        <div className="bg-slate-900/50 backdrop-blur-sm border border-slate-800 rounded-3xl p-6 md:p-8 mb-16 relative overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-purple-500/5 to-pink-500/5 pointer-events-none" />
-          <h3 className="text-sm font-bold font-mono tracking-widest text-slate-300 uppercase mb-6 flex items-center gap-2">
-            <Globe className="w-4 h-4 text-purple-400" />
-            Live Deployment & Codebase
-          </h3>
-          <div className="grid md:grid-cols-2 gap-4">
-            {/* Vercel Deploy Link */}
-            <a
-              href={currentDomain}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-950/80 hover:bg-slate-950 border border-slate-800 hover:border-purple-500/50 p-4 rounded-2xl flex items-center justify-between transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-950/60 border border-purple-900/50 rounded-xl group-hover:bg-purple-600/10 transition-colors">
-                  <LinkIcon className="w-4 h-4 text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wide">Live Portal Vercel</h4>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5 max-w-[200px] sm:max-w-none truncate">{currentDomain}</p>
-                </div>
-              </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-600 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-            </a>
 
-            {/* GitHub Repo Link */}
-            <a
-              href="https://github.com/ouzbhdr/solread"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-slate-950/80 hover:bg-slate-950 border border-slate-800 hover:border-purple-500/50 p-4 rounded-2xl flex items-center justify-between transition-all group"
-            >
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-purple-950/60 border border-purple-900/50 rounded-xl group-hover:bg-purple-600/10 transition-colors">
-                  <Code2 className="w-4 h-4 text-purple-400" />
-                </div>
-                <div>
-                  <h4 className="text-xs font-mono font-bold text-slate-400 uppercase tracking-wide">GitHub Repository</h4>
-                  <p className="text-xs text-slate-500 font-mono mt-0.5">github.com/ouzbhdr/solread</p>
-                </div>
-              </div>
-              <ArrowUpRight className="w-4 h-4 text-slate-600 group-hover:text-purple-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
-            </a>
-          </div>
-        </div>
 
         {/* Timeline Path */}
         <div className="relative pl-4 space-y-12">

@@ -36,6 +36,26 @@ export default function UserProfile() {
   const { publicKey, connected } = useWallet();
   const [unlockedArticles, setUnlockedArticles] = useState<any[]>([]);
   const [totalSOLSpent, setTotalSOLSpent] = useState(0);
+  
+  const [username, setUsername] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
+  const [editVal, setEditVal] = useState("");
+
+  // Load username
+  useEffect(() => {
+    const saved = localStorage.getItem("solread_profile_username");
+    if (saved) {
+      setUsername(saved);
+      setEditVal(saved);
+    }
+  }, []);
+
+  const saveUsername = () => {
+    const trimmed = editVal.trim();
+    setUsername(trimmed);
+    localStorage.setItem("solread_profile_username", trimmed);
+    setIsEditing(false);
+  };
 
   useEffect(() => {
     // 1. Gather all local custom articles
@@ -140,16 +160,49 @@ export default function UserProfile() {
             <div className="p-4 bg-purple-600 rounded-2xl shadow-[0_0_20px_rgba(147,51,234,0.4)]">
               <User className="w-8 h-8 text-white animate-pulse" />
             </div>
-            <div>
-              <h2 className="text-xl font-bold tracking-wide text-slate-200 flex items-center gap-2 justify-center sm:justify-start">
-                Reader Profile
+            <div className="flex-1">
+              <div className="flex items-center gap-2.5 justify-center sm:justify-start flex-wrap mb-1">
+                {isEditing ? (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <input
+                      type="text"
+                      value={editVal}
+                      onChange={(e) => setEditVal(e.target.value)}
+                      placeholder="Username"
+                      className="bg-slate-950 border border-slate-800 rounded px-2.5 py-1 text-sm font-mono text-slate-200 focus:outline-none focus:border-purple-500 w-36"
+                    />
+                    <button
+                      onClick={saveUsername}
+                      className="px-2 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded text-[10px] font-mono font-bold cursor-pointer"
+                    >
+                      SAVE
+                    </button>
+                    <button
+                      onClick={() => { setEditVal(username); setIsEditing(false); }}
+                      className="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-400 rounded text-[10px] font-mono cursor-pointer"
+                    >
+                      CANCEL
+                    </button>
+                  </div>
+                ) : (
+                  <h2 className="text-xl font-bold tracking-wide text-slate-200 flex items-center gap-2 flex-wrap">
+                    {username ? username : (publicKey ? shortAddress(publicKey.toBase58()) : "Guest Reader")}
+                    <button
+                      onClick={() => { setEditVal(username); setIsEditing(true); }}
+                      className="text-[10px] text-slate-500 hover:text-purple-400 font-mono font-normal hover:underline cursor-pointer"
+                    >
+                      (edit)
+                    </button>
+                  </h2>
+                )}
+
                 {connected && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-950/60 border border-green-800/40 rounded text-[9px] font-mono text-green-400">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-950/60 border border-green-800/40 rounded text-[9px] font-mono text-green-400 shrink-0">
                     <ShieldCheck className="w-3 h-3" /> VERIFIED
                   </span>
                 )}
-              </h2>
-              <p className="text-xs font-mono text-slate-500 mt-1">
+              </div>
+              <p className="text-xs font-mono text-slate-500">
                 {connected && publicKey
                   ? `SOL Wallet: ${publicKey.toBase58()}`
                   : "Wallet not connected (browsing as guest)"}
