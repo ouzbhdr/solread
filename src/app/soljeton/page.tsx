@@ -107,10 +107,10 @@ export default function SolJetonShowcase() {
           })}
         </div>
 
-        {/* Generator Section */}
-        <div className="grid md:grid-cols-5 gap-8 items-start">
-          {/* Inputs Panel (2/5 size) */}
-          <div className="md:col-span-2 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
+        {/* Step 1: Design & Preview (Side-by-Side) */}
+        <div className="grid md:grid-cols-2 gap-8 items-start mb-12">
+          {/* Inputs Panel */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 flex flex-col gap-5">
             <h2 className="text-lg font-bold font-mono tracking-wider text-purple-300 flex items-center gap-2">
               <Sparkles className="w-4 h-4 text-purple-400" />
               CONFIGURE WIDGET
@@ -131,7 +131,7 @@ export default function SolJetonShowcase() {
               />
             </div>
 
-            {/* Input 2: Price in SOL */}
+            {/* Input 2: Price in SOL/USDC */}
             <div className="flex flex-col gap-1.5">
               <label className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
                 Article Price
@@ -181,129 +181,136 @@ export default function SolJetonShowcase() {
             </div>
           </div>
 
-          {/* Code Output Panel (3/5 size) */}
-          <div className="md:col-span-3 flex flex-col gap-4">
-            <div className="bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-              <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800 bg-slate-900/40">
-                <div className="flex items-center gap-2">
-                  <Terminal className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs font-mono text-slate-400">widget-snippet.html</span>
-                </div>
-                <button
-                  onClick={handleCopy}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-purple-600/30 border border-slate-700 hover:border-purple-500 text-slate-400 hover:text-purple-300 text-xs font-mono transition-all"
+          {/* Live Preview Panel */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col gap-5">
+            <div>
+              <h3 className="text-lg font-bold font-mono tracking-wider text-purple-300 uppercase flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-purple-400" />
+                LIVE PREVIEW
+              </h3>
+              <p className="text-slate-500 text-xs mt-1">
+                See exactly how the paywall behaves on your visitors&apos; screens.
+              </p>
+            </div>
+            <hr className="border-slate-800" />
+            
+            {previewUnlocked ? (
+              <div className="bg-green-950/20 border border-green-800/40 rounded-xl p-6 text-center flex flex-col gap-3 items-center">
+                <Unlock className="w-8 h-8 text-green-400 animate-bounce" />
+                <h4 className="font-bold text-green-400 font-mono text-sm">CONTENT UNLOCKED!</h4>
+                <p className="text-xs text-slate-300 leading-relaxed font-mono">
+                  {unlockedContent || "🎉 Success! This is your premium locked content revealed automatically."}
+                </p>
+                <button 
+                  onClick={() => {
+                    setPreviewUnlocked(false);
+                    setUnlockedContent("");
+                  }}
+                  className="mt-2 text-xs font-mono text-purple-400 hover:text-purple-300 underline cursor-pointer"
                 >
-                  {copied ? (
-                    <Check className="w-3.5 h-3.5 text-green-400" />
-                  ) : (
-                    <Copy className="w-3.5 h-3.5" />
-                  )}
-                  {copied ? "Copied!" : "Copy Snippet"}
+                  Reset Lock Demo
                 </button>
               </div>
+            ) : (
+              <div className="w-full flex justify-center py-2">
+                <SolJetonPaywall
+                  articleId={articleId}
+                  priceSOL={parseFloat(priceSOL) || 0.005}
+                  recipientAddress={recipient === "YOUR_WALLET_ADDRESS" || !recipient.trim() ? "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR" : recipient}
+                  token={token}
+                  onUnlocked={(content) => {
+                    setPreviewUnlocked(true);
+                    setUnlockedContent(content);
+                  }}
+                  customPremiumContent="🎉 Success! This is your premium locked content revealed automatically."
+                />
+              </div>
+            )}
+          </div>
+        </div>
 
-              {/* Code display */}
-              <pre className="p-6 text-xs font-mono overflow-x-auto leading-relaxed max-h-[350px]">
-                <code>
-                  <span className="text-slate-600">{"<!-- 1. Place the container where you want the paywall to render -->"}</span>{"\n"}
-                  <span className="text-slate-400">{"<"}</span>
-                  <span className="text-pink-400">{"div"}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-article"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${articleId}"`}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-price"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${priceSOL}"`}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-recipient"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${recipient}"`}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-token"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${token}"`}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{'"premium-locked-content"'}</span>{"\n"}
-                  {"  "}
-                  <span className="text-purple-300">{"data-soljeton-domain"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${currentDomain}"`}</span>{"\n"}
-                  <span className="text-slate-400">{"></div>"}</span>{"\n\n"}
-                  <span className="text-slate-600">{"<!-- 2. Import the single line embed widget script -->"}</span>{"\n"}
-                  <span className="text-slate-400">{"<"}</span>
-                  <span className="text-pink-400">{"script"}</span>{" "}
-                  <span className="text-purple-300">{"src"}</span>
-                  <span className="text-slate-400">{"="}</span>
-                  <span className="text-yellow-300">{`"${currentDomain}/widget.js"`}</span>
-                  <span className="text-slate-400">{"></"}</span>
-                  <span className="text-pink-400">{"script"}</span>
-                  <span className="text-slate-400">{">"}</span>
-                </code>
-              </pre>
-            </div>
-            
-            {/* Live Preview Section */}
-            <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 shadow-[0_0_30px_rgba(0,0,0,0.5)] flex flex-col gap-4">
-              <h3 className="text-sm font-bold font-mono tracking-wider text-purple-300 uppercase flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-400" />
-                Live Preview (How it looks on your site)
-              </h3>
-              <hr className="border-slate-800" />
-              
-              {previewUnlocked ? (
-                <div className="bg-green-950/20 border border-green-800/40 rounded-xl p-6 text-center flex flex-col gap-3 items-center">
-                  <Unlock className="w-8 h-8 text-green-400" />
-                  <h4 className="font-bold text-green-400 font-mono">CONTENT UNLOCKED!</h4>
-                  <p className="text-xs text-slate-300 leading-relaxed font-mono">
-                    {unlockedContent || "🎉 Success! This is your premium locked content revealed automatically."}
-                  </p>
-                  <button 
-                    onClick={() => {
-                      setPreviewUnlocked(false);
-                      setUnlockedContent("");
-                    }}
-                    className="mt-2 text-xs font-mono text-purple-400 hover:text-purple-300 underline cursor-pointer"
-                  >
-                    Reset Lock Demo
-                  </button>
-                </div>
-              ) : (
-                <div className="w-full flex justify-center">
-                  <SolJetonPaywall
-                    articleId={articleId}
-                    priceSOL={parseFloat(priceSOL) || 0.005}
-                    recipientAddress={recipient === "YOUR_WALLET_ADDRESS" || !recipient.trim() ? "GvDMxPzN1sCj7L26YDK2HnMRXEQmQ2aemov8YBtPS7vR" : recipient}
-                    token={token}
-                    onUnlocked={(content) => {
-                      setPreviewUnlocked(true);
-                      setUnlockedContent(content);
-                    }}
-                    customPremiumContent="🎉 Success! This is your premium locked content revealed automatically."
-                  />
-                </div>
-              )}
+        {/* Step 2: Grab Code & Learn Integration */}
+        <div className="grid md:grid-cols-5 gap-8 items-start">
+          {/* Code Output Panel (3/5 size) */}
+          <div className="md:col-span-3 bg-slate-950 border border-slate-800 rounded-2xl overflow-hidden shadow-[0_0_30px_rgba(0,0,0,0.5)]">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-slate-800 bg-slate-900/40">
+              <div className="flex items-center gap-2">
+                <Terminal className="w-4 h-4 text-purple-400" />
+                <span className="text-xs font-mono text-slate-400">widget-snippet.html</span>
+              </div>
+              <button
+                onClick={handleCopy}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-purple-600/30 border border-slate-700 hover:border-purple-500 text-slate-400 hover:text-purple-300 text-xs font-mono transition-all"
+              >
+                {copied ? (
+                  <Check className="w-3.5 h-3.5 text-green-400" />
+                ) : (
+                  <Copy className="w-3.5 h-3.5" />
+                )}
+                {copied ? "Copied!" : "Copy Snippet"}
+              </button>
             </div>
 
-            <div className="bg-slate-900/40 border border-slate-800 rounded-2xl p-5">
-              <h4 className="font-mono font-bold text-xs text-slate-300 mb-2 uppercase tracking-wide">
-                How Integration Works
-              </h4>
-              <ol className="list-decimal list-inside text-xs text-slate-500 space-y-2">
-                <li>
-                  Place a <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"<div>"}</code> container inside your article flow right where the paywall should appear.
-                </li>
-                <li>
-                  Set the actual premium content section on your page to have the ID matching <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"data-soljeton-reveal-id"}</code> (e.g. <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"id=\"premium-locked-content\""}</code>). By default, style it with <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"display: none"}</code>.
-                </li>
-                <li>
-                  Inject the <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"widget.js"}</code> script. It automatically finds the paywall placeholder, initializes the secure payment iframe, and displays the content instantly upon verified transaction.
-                </li>
-              </ol>
-            </div>
+            {/* Code display */}
+            <pre className="p-6 text-xs font-mono overflow-x-auto leading-relaxed max-h-[350px]">
+              <code>
+                <span className="text-slate-600">{"<!-- 1. Place the container where you want the paywall to render -->"}</span>{"\n"}
+                <span className="text-slate-400">{"<"}</span>
+                <span className="text-pink-400">{"div"}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-article"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${articleId}"`}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-price"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${priceSOL}"`}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-recipient"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${recipient}"`}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-token"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${token}"`}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-reveal-id"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{'"premium-locked-content"'}</span>{"\n"}
+                {"  "}
+                <span className="text-purple-300">{"data-soljeton-domain"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${currentDomain}"`}</span>{"\n"}
+                <span className="text-slate-400">{"></div>"}</span>{"\n\n"}
+                <span className="text-slate-600">{"<!-- 2. Import the single line embed widget script -->"}</span>{"\n"}
+                <span className="text-slate-400">{"<"}</span>
+                <span className="text-pink-400">{"script"}</span>{" "}
+                <span className="text-purple-300">{"src"}</span>
+                <span className="text-slate-400">{"="}</span>
+                <span className="text-yellow-300">{`"${currentDomain}/widget.js"`}</span>
+                <span className="text-slate-400">{"></"}</span>
+                <span className="text-pink-400">{"script"}</span>
+                <span className="text-slate-400">{">"}</span>
+              </code>
+            </pre>
+          </div>
+
+          {/* Integration Guide (2/5 size) */}
+          <div className="md:col-span-2 bg-slate-900/40 border border-slate-800 rounded-2xl p-6">
+            <h4 className="font-mono font-bold text-xs text-slate-300 mb-2 uppercase tracking-wide">
+              How Integration Works
+            </h4>
+            <ol className="list-decimal list-inside text-xs text-slate-500 space-y-2.5">
+              <li>
+                Place a <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"<div>"}</code> container inside your article flow right where the paywall should appear.
+              </li>
+              <li>
+                Set the actual premium content section on your page to have the ID matching <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"data-soljeton-reveal-id"}</code> (e.g. <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"id=\"premium-locked-content\""}</code>). Style it with <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"display: none"}</code> by default.
+              </li>
+              <li>
+                Inject the <code className="text-slate-400 bg-slate-950 px-1 py-0.5 rounded font-mono">{"widget.js"}</code> script. It automatically finds the paywall placeholder, initializes the secure payment iframe, and displays the content instantly upon verified transaction.
+              </li>
+            </ol>
           </div>
         </div>
       </main>
