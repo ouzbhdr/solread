@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { Coins, BookOpen, Terminal, Edit3, User } from "lucide-react";
+import { Coins, BookOpen, Terminal, Edit3, User, Map } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
@@ -14,6 +14,7 @@ export function Header() {
     { href: "/soljeton", label: "SolJeton Widget", icon: Terminal },
     { href: "/write", label: "Write", icon: Edit3 },
     { href: "/profile", label: "Profile", icon: User },
+    { href: "/roadmap", label: "Roadmap", icon: Map },
   ];
 
   return (
